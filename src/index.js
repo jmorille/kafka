@@ -29,7 +29,7 @@ producer.on('ready', function() {
 
     // Create a new payload
     const payload = [{
-        topic: 'node-test',
+        topic: 'test',
         messages: 'Hi !!!',
         attributes: 1 /* Use GZip compression for the payload */
     }];
@@ -46,20 +46,5 @@ producer.on('ready', function() {
     });
 });
 
-const Consumer = kafka.Consumer;
-const consumer = new Consumer(
-    client,
-    [
-        { topic: 'node-test', partition: 1 }
-    ],
-    {
-        autoCommit: false
-    }
-);
 
-consumer.on('error', function(error) {
-    console.error(error);
-});
-consumer.on('message',   (message) => {
-    console.log(message);
-});
+
