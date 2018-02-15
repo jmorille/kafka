@@ -6,6 +6,7 @@ services:
       - "2181:2181"
     networks:
       - kafka-network
+      
   kafka:
     image: wurstmeister/kafka
     ports:
@@ -18,7 +19,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - kafka-network
-  kafkaMgr:
+      
+  kafka-manager:
     image: dockerkafka/kafka-manager
     ports:
       - "9000:9000"
