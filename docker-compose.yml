@@ -26,7 +26,7 @@ services:
       - kafka-network
       
   kafka-manager:
-    image: dockerkafka/kafka-manager
+    image: sheepkiller/kafka-manager
     ports:
       - "9000:9000"
     depends_on:
