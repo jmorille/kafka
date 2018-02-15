@@ -11,6 +11,8 @@ services:
     image: wurstmeister/kafka
     ports:
       - "9092:9092"
+    depends_on:
+      - zookeeper      
     environment:
       KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
       KAFKA_CREATE_TOPICS: "test:1:1"
@@ -24,6 +26,8 @@ services:
     image: dockerkafka/kafka-manager
     ports:
       - "9000:9000"
+    depends_on:
+      - kafka          
     environment:
       ZK_HOSTS: zookeeper:2181
     networks:
