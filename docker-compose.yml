@@ -1,17 +1,79 @@
-version: '2'
+version: '3.3'
 services:
+
   zookeeper:
-    image: wurstmeister/zookeeper
+    image: zookeeper:latest
+    restart: unless-stopped 
+    hostname: zookeeper
     ports:
       - "2181:2181"
+    environment:
+        ZOO_MY_ID: 1
+        ZOO_PORT: 2181
+        ZOO_SERVERS: server.1=zookeeper:2888:3888
+    networks:
+      - kafka-network
+      
   kafka:
     image: wurstmeister/kafka
+    hostname: kafka
     ports:
       - "9092:9092"
+    depends_on:
+      - zookeeper
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
-      KAFKA_CREATE_TOPICS: "test:1:1"
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_HOST_NAME: "thor"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://0.0.0.0:9092"
+      KAFKA_CREATE_TOPICS: "test:1:1,file:1:1"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - kafka-network
 
+ 
+      
+  kafka-rest:
+    image: confluentinc/cp-kafka-rest
+    depends_on:
+      - kafka
+      - zookeeper 
+    ports:
+      - "8082:8082"
+    environment:
+      KAFKA_REST_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_REST_LISTENERS: http://0.0.0.0:8082/
+      KAFKA_REST_HOST_NAME: "kafka-rest"
+      KAFKA_REST_BOOTSTRAP_SERVERS: kafka:9092
+    networks:
+      - kafka-network
+
+  kafka-topics-ui:
+    image: landoop/kafka-topics-ui
+    depends_on:
+      - kafka
+      - zookeeper
+      - kafka-rest
+    ports:
+      - "8000:8000"
+    environment:
+      KAFKA_REST_PROXY_URL: "http://kafka-rest:8082"
+      PROXY: "true"
+    networks:
+      - kafka-network
+
+  kafka-manager:
+    image: sheepkiller/kafka-manager:latest
+    ports:
+      - "9000:9000"
+    depends_on:
+      - kafka
+      - zookeeper
+    environment:
+      ZK_HOSTS: "zookeeper:2181"
+      APPLICATION_SECRET: "shutc1secret"   
+    networks:
+      - kafka-network
+      
+networks:
+    kafka-network:
