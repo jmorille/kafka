@@ -33,6 +33,14 @@ producer.on('ready', function() {
         messages: 'Hi !!!',
         attributes: 1 /* Use GZip compression for the payload */
     }];
+    producer.send(payload, (error, result) => {  console.log('result: ', result) });
+    producer.send(payload, (error, result) => {  console.log('result: ', result) });
+    producer.send(payload, (error, result) => {  console.log('result: ', result) });
+    producer.send(payload, (error, result) => {  console.log('result: ', result) });
+    producer.send(payload, (error, result) => {  console.log('result: ', result) });
+    producer.send(payload, (error, result) => {  console.log('result: ', result) });
+    producer.send(payload, (error, result) => {  console.log('result: ', result) });
+    producer.send(payload, (error, result) => {  console.log('result: ', result) });
 
     //Send payload to Kafka and log result/error
     producer.send(payload,  (error, result) => {
